@@ -11,7 +11,7 @@ export async function sendVerificationEmail(
 ): Promise<apiResponse> {
   try {
     await resend.emails.send({
-      from: "Acme <onboarding@resend.dev>",
+      from: "NoCap Message <onboarding@resend.dev>",
       to: email,
       subject: "NoCap Message Verification Code",
       react: verificationEmail({ username, otp }),
