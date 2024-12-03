@@ -4,7 +4,6 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User.model";
 import bcrypt from "bcrypt";
 
-
 export async function POST(request: Request) {
   await dbConnect();
   try {
@@ -13,6 +12,7 @@ export async function POST(request: Request) {
       username,
       isVerified: true,
     });
+ 
     if (existingUserVerifiedByUsername) {
       return Response.json(
         {
@@ -28,11 +28,21 @@ export async function POST(request: Request) {
       if(existingUserByEmail.isVerified){
         return Response.json({
           success: false,
-          message: "User already exists with this email",
+          message: "A verified user already exists with this email",
           statusCode: 400,
         },{status:400})
         
+      }else{
+        return Response.json( {
+          success: false,
+          message: "user already registered but not verified",
+          statusCode: 400,
+        },
+        {
+          status: 400,
+        })
       }
+      
       //todo
     } else {
       const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -64,12 +74,11 @@ export async function POST(request: Request) {
         return Response.json(      {
           success: true,
           message: "Verification email sent, please verify your account",
-          statusCode: 500,
+          statusCode: 200,
         },
         {
           status: 200,
         })
-
       }
     }
   } catch (error) {
