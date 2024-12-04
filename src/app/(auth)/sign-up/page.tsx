@@ -1,7 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/hooks/use-toast";
-import { useSession,  signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -28,7 +27,7 @@ export default function Component() {
   const [usernameMessage, setUsernameMessage] = useState("");
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const debounced = useDebounceCallback(setUsername,500);
+  const debounced = useDebounceCallback(setUsername, 500);
   const router = useRouter();
   // zod implementation
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -42,9 +41,9 @@ export default function Component() {
   // *checking if the username is unique
   useEffect(() => {
     const isUsernameUnique = async () => {
+      setUsernameMessage("");
       if (username) {
         setIsCheckingUsername(true);
-        setUsernameMessage("");
         try {
           const response = await axios.get(
             `/api/check-username-unique?username=${username.toString()}`
@@ -63,7 +62,6 @@ export default function Component() {
     isUsernameUnique();
   }, [username]);
 
-
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
     setIsSubmitting(true);
     try {
@@ -77,12 +75,10 @@ export default function Component() {
       }
     } catch (error) {
       console.log(error);
-
     } finally {
       setIsSubmitting(false);
     }
   };
-
 
   return (
     <>
@@ -107,8 +103,10 @@ export default function Component() {
                       />
                     </FormControl>
                     <FormDescription>
-                      {isCheckingUsername && <Loader2 className="animate-spin"></Loader2>}
-                      {usernameMessage}
+                      {isCheckingUsername && (
+                        <Loader2 className='animate-spin'></Loader2>
+                      )}
+                      <span className={usernameMessage==="username is unique"?"text-green-500":"text-red-600"}>{usernameMessage}</span>
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
